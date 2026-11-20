@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroLink Gondar - የግብርና ገበያ ትስስር</title>
+  <style>
+    :root {
+      --primary: #1b6b3a;
+      --primary-dark: #134e2a;
+      --accent: #e69d18;
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 40px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 0.88rem;
+      opacity: 0.9;
+    }
+
+    .tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 13px 8px;
+      border: none;
+      background: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: #f0fdf4;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 16px auto;
+      padding: 0 14px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--primary-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      background: #dcfce7;
+      color: var(--primary-dark);
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+
+    .price-tag {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+
+    .product-item {
+      border-left: 4px solid var(--primary);
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .product-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .product-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: #f0fdf4;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      margin-top: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 0.86rem;
+      display: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>AgroLink Gondar</h1>
+    <p>ወቅታዊ የግብርና ምርት ዋጋ እና ቀጥታ የገበያ ትስስር</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" onclick="switchTab('market', this)">ገበያ (ምርቶች)</button>
+    <button class="tab-btn" onclick="switchTab('prices', this)">የዕለት ዋጋ</button>
+    <button class="tab-btn" onclick="switchTab('post', this)">+ ምርት መዝግብ</button>
+  </nav>
+
+  <div class="container">
+    <!-- 1. የገበያ ትስስር ክፍል -->
+    <section id="market" class="section active">
+      <input
+        type="text"
+        id="searchInput"
+        class="search-box"
+        placeholder="ምርት ወይም ቦታ ይፈልጉ (ለምሳሌ፡ ጤፍ፣ አዘዞ፣ ሽንኩርት)..."
+        onkeyup="renderListings()"
+      />
+      <div id="listingsContainer"></div>
+    </section>
+
+    <!-- 2. ወቅታዊ የዋጋ መረጃ -->
+    <section id="prices" class="section">
+      <div class="card">
+        <div class="section-title">
+          <span>የጎንደር ገበያ አማካይ ዋጋ</span>
+          <span class="badge">ዛሬ የታደሰ</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>የምርት ዓይነት</th>
+              <th>መለኪያ</th>
+              <th>አማካይ ዋጋ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ነጭ ጤፍ</td>
+              <td>በኩንታል</td>
+              <td class="price-tag">11,500 ብር</td>
+            </tr>
+            <tr>
+              <td>ቀይ ሽንኩርት</td>
+              <td>በኪሎ</td>
+              <td class="price-tag">65 ብር</td>
+            </tr>
+            <tr>
+              <td>ቲማቲም</td>
+              <td>በኪሎ</td>
+              <td class="price-tag">45 ብር</td>
+            </tr>
+            <tr>
+              <td>ድንች</td>
+              <td>በኪሎ</td>
+              <td class="price-tag">38 ብር</td>
+            </tr>
+            <tr>
+              <td>በርበሬ (ደረቅ)</td>
+              <td>በኪሎ</td>
+              <td class="price-tag">340 ብር</td>
+            </tr>
+            <tr>
+              <td>በቆሎ</td>
+              <td>በኩንታል</td>
+              <td class="price-tag">4,800 ብር</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. አርሶ አደር ምርት የሚመዘግብበት ቅጽ -->
+    <section id="post" class="section">
+      <div class="card">
+        <div class="section-title">
+          <span>አዲስ ምርት ለገበያ ያቅርቡ</span>
+          <span class="badge">ያለ ደላላ</span>
+        </div>
+        <form id="productForm" onsubmit="addProduct(event)">
+          <div class="form-group">
+            <label>የአቅራቢ / አርሶ አደር ስም</label>
+            <input type="text" id="farmerName" placeholder="ለምሳሌ፡ አቶ አበበ ካሳ" required />
+          </div>
+          <div class="form-group">
+            <label>የምርት ዓይነት</label>
+            <input type="text" id="cropName" placeholder="ለምሳሌ፡ ቀይ ሽንኩርት / ነጭ ጤፍ" required />
+          </div>
+          <div class="form-group">
+            <label>የምርት መጠን</label>
+            <input type="text" id="quantity" placeholder="ለምሳሌ፡ 20 ኩንታል / 500 ኪሎ" required />
+          </div>
+          <div class="form-group">
+            <label>የመሸጫ ዋጋ (በብር)</label>
+            <input type="text" id="price" placeholder="ለምሳሌ፡ 60 ብር/ኪሎ" required />
+          </div>
+          <div class="form-group">
+            <label>የሚገኝበት ቦታ</label>
+            <select id="location">
+              <option value="አዘዞ (Azezo)">አዘዞ (Azezo)</option>
+              <option value="ማራኪ (Maraki)">ማራኪ (Maraki)</option>
+              <option value="ፒያሳ (Piassa)">ፒያሳ (Piassa)</option>
+              <option value="ቆላ ድባ (Kola Diba)">ቆላ ድባ (Kola Diba)</option>
+              <option value="ማክሰኝት (Maksegnit)">ማክሰኝት (Maksegnit)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>ስልክ ቁጥር</label>
+            <input type="tel" id="phone" placeholder="09..." required />
+          </div>
+          <button type="submit" class="btn btn-primary">ምርቱን ወደ ገበያ ላክ</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const defaultListings = [
+      {
+        farmer: "አቶ ታደሰ ሞላ",
+        crop: "ቀይ ሽንኩርት (ትኩስ)",
+        quantity: "15 ኩንታል",
+        price: "58 ብር / ኪሎ",
+        location: "ቆላ ድባ (Kola Diba)",
+        phone: "+251918001122"
+      },
+      {
+        farmer: "ወ/ሮ አልማዝ ተስፋዬ",
+        crop: "ነጭ ጤፍ (የተጣራ)",
+        quantity: "10 ኩንታል",
+        price: "11,200 ብር / ኩንታል",
+        location: "ማክሰኝት (Maksegnit)",
+        phone: "+251918334455"
+      },
+      {
+        farmer: "አቶ በላይነህ ጌታቸው",
+        crop: "ቲማቲም",
+        quantity: "400 ኪሎ",
+        price: "40 ብር / ኪሎ",
+        location: "አዘዞ (Azezo)",
+        phone: "+251918667788"
+      }
+    ];
+
+    let listings = JSON.parse(localStorage.getItem("agrolink_listings")) || defaultListings;
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      btn.classList.add("active");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 2800);
+    }
+
+    function renderListings() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const container = document.getElementById("listingsContainer");
+      container.innerHTML = "";
+
+      const filtered = listings.filter(item =>
+        item.crop.toLowerCase().includes(query) ||
+        item.location.toLowerCase().includes(query) ||
+        item.farmer.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="card" style="text-align:center;color:#6b7280;">ምንም የተገኘ ምርት የለም።</div>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card product-item";
+        card.innerHTML = `
+          <div class="product-header">
+            <div class="product-name">${item.crop}</div>
+            <span class="price-tag">${item.price}</span>
+          </div>
+          <div class="product-meta">
+            <strong>አቅራቢ፡</strong> ${item.farmer}<br/>
+            <strong>መጠን፡</strong> ${item.quantity} &bull; <strong>ቦታ፡</strong> ${item.location}
+          </div>
+          <a href="tel:${item.phone}" class="btn btn-primary">በቀጥታ ይደውሉ (${item.phone})</a>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function addProduct(e) {
+      e.preventDefault();
+      const newItem = {
+        farmer: document.getElementById("farmerName").value,
+        crop: document.getElementById("cropName").value,
+        quantity: document.getElementById("quantity").value,
+        price: document.getElementById("price").value,
+        location: document.getElementById("location").value,
+        phone: document.getElementById("phone").value
+      };
+
+      listings.unshift(newItem);
+      localStorage.setItem("agrolink_listings", JSON.stringify(listings));
+      document.getElementById("productForm").reset();
+      renderListings();
+      showToast("ምርትዎ በተሳካ ሁኔታ ወደ ገበያ ገብቷል!");
+      switchTab("market", document.querySelectorAll(".tab-btn")[0]);
+    }
+
+    renderListings();
+  </script>
+</body>
+</html>
